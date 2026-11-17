@@ -877,7 +877,7 @@ async function goErupt() {
   const key = M.classify(S, T, W);
   sim.outcome = key;
   const o = M.OUTCOMES[key];
-  { const L0 = M.logEta(S, T, W); if (runs.length >= 2) EF.extra('Extra eruption'); runs.push({ m: sim.m, S, T, W, pred: sim.pred, out: key, ok: sim.pred === o.cls, rE: sim.rE, rG: sim.rG, conf: sim.conf, eE: refE(L0), eG: refG(W) }); }
+  { const L0 = M.logEta(S, T, W); EF.resolved(); EF.mark({ ok: sim.pred === o.cls, conf: sim.conf }); if (sim.pred !== o.cls) EF.wrong(); if (runs.length >= 2) EF.extra('Extra eruption'); runs.push({ m: sim.m, S, T, W, pred: sim.pred, out: key, ok: sim.pred === o.cls, rE: sim.rE, rG: sim.rG, conf: sim.conf, eE: refE(L0), eG: refG(W) }); }
   hint(false);
   await fade(true);
   state = 'erupt';
@@ -940,6 +940,7 @@ function goDebrief() {
   const todo = ['Play the Hotspot mission and a subduction mission.', 'Produce two different eruption styles.', 'Build two different kinds of volcano.'];
   const mk = (a, b, names) => `${names[a]}${a === b ? '' : ' <span class="dim">(model: ' + names[b].toLowerCase() + ')</span>'}`;
   const rows = runs.map((r, i) => `<tr><td>${i + 1}</td><td>${M.MISSIONS[r.m].name}<br><span class="dim">${r.S.toFixed(0)}% · ${Math.round(r.T)}° · ${r.W.toFixed(1)}%</span></td><td>${mk(r.rE, r.eE, RE)}</td><td>${mk(r.rG, r.eG, RG)}</td><td>${M.PRED[r.pred].label}<br><span class="dim">${CONF[r.conf].toLowerCase()}</span></td><td>${M.OUTCOMES[r.out].name}</td><td>${r.ok ? '✓' : '✗'}</td></tr>`).join('');
+  EF.resolved();
   const full = runs.filter((r) => r.ok && r.rE === r.eE && r.rG === r.eG).length, lucky = ok - full;
   const sure = runs.filter((r) => r.conf === 2), sureOk = sure.filter((r) => r.ok).length;
   const stiffQuiet = runs.some((r) => r.out === 'dome');
